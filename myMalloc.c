@@ -17,10 +17,10 @@ block *find_free_block(unsigned int size, unsigned int align)
     while (find != NULL)
     {
         unsigned int ptr = (unsigned int)find;
-        unsigned int empty = ((ptr + sizeof(unsigned int)) % align);
+        unsigned int empty = (ptr + sizeof(unsigned int)) % align;
         empty = (empty > 0) ? align - empty : empty;
 
-        if ((find->free == 1) && (size + empty <= find->totalSize))
+        if ((find->free == 1) && (size + empty + sizeof(empty) <= find->totalSize))
             return find;
 
         find = find->next;
@@ -94,15 +94,18 @@ void *aligned_malloc(unsigned int size, unsigned int align)
     {
         unsigned int addr, empty;
         tmpBlock->free = 0;
-
+        
+        // Set empty
         addr = (unsigned int)(tmpBlock + 1);
         empty = (addr + sizeof(empty)) % align;
         empty = (empty > 0) ? align - empty : empty;
 
+        // Set sizeof(empty)
         addr = (unsigned int)(tmpBlock + 1) + empty;
-        unsigned int *emptytSize = (unsigned int *)addr;
+        unsigned int *emptySize = (unsigned int *)addr;
         *emptySize = empty;
 
+        // Set return address
         addr = (unsigned int)(tmpBlock + 1) + empty + sizeof(empty);
         tmpBlock->alignedMalloc = (void *)addr;
 
