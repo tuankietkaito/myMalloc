@@ -50,7 +50,7 @@ void *create_new_block(unsigned int size, unsigned int align)
     if (sbrk(sizeof(empty)) == SBRK_ERROR)
         return NULL;
 
-    ((unsigned int)sbrk(0) - 1) = empty;
+    *((unsigned int)sbrk(0) - 1) = empty;
     printf("%d %d", ((unsigned int)sbrk(0) - 1), empty);
 
     block *newBlock = (block *)returnBlock;

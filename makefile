@@ -1,4 +1,4 @@
-all: main.c myyMalloc.c myMalloc.h
+all: main.c myMalloc.c myMalloc.h
 	gcc -o main main.c myMalloc.c
 
 clean:
