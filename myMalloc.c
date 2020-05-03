@@ -50,7 +50,7 @@ void *create_new_block(unsigned int size, unsigned int align)
     if (sbrk(sizeof(empty)) == SBRK_ERROR)
         return NULL;
     *((unsigned int *)sbrk(0) - 1) = empty;
-    printf("Empty at %d is %d, ", ((unsigned int)sbrk(0) - 1), empty);
+    // printf("Empty at %d is %d, ", ((unsigned int)sbrk(0) - 1), empty);
 
     block *blockInfo = (block *)returnBlock;
     blockInfo->alignedMalloc = (void *)sbrk(0);
@@ -106,7 +106,7 @@ void *aligned_malloc(unsigned int size, unsigned int align)
         addr = (unsigned int)(tmpBlock + 1) + empty + sizeof(empty);
         tmpBlock->alignedMalloc = (void *)addr;
 
-        printf("Old block: Info at %u - Block at %u\n", (unsigned int)tmpBlock, (unsigned int)tmpBlock->alignedMalloc);
+        printf("New malloc at %u\n", (unsigned int)tmpBlock->alignedMalloc);
         return tmpBlock->alignedMalloc;
     }
 
@@ -121,7 +121,7 @@ void *aligned_malloc(unsigned int size, unsigned int align)
         bot->next = tmpBlock;
     bot = tmpBlock;
 
-    printf("New block: Info at %u - Block at %u\n", (unsigned int)tmpBlock, (unsigned int)tmpBlock->alignedMalloc);
+    printf("New malloc at %u\n", (unsigned int)tmpBlock->alignedMalloc);
     return tmpBlock->alignedMalloc;
 }
 
@@ -152,7 +152,7 @@ void *aligned_free(void *ptr)
 
         // Return the address of the <block info> in block needed to be free
         sbrk(0 - sizeof(block) - freeBlock->totalSize);
-        printf("Release memory to OS at %u, Bottom: %u\n", freeBlock, bot);
+        printf("Block free at %u\n", freeBlock);
 
         return sbrk(0);
     }
