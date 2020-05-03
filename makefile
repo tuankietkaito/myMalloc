@@ -1,5 +1,5 @@
-all: main.c myMalloc.c myMalloc.h
-	gcc -o main main.c myMalloc.c
+all: main.c ex1.c ex1.h
+	gcc -o main main.c ex1.c
 
 clean:
 	rm -f main

@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <inttypes.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <math.h>
 
 #define SBRK_ERROR (void *)-1
 
-#include "myMalloc.h"
+#include "ex1.h"
 
 block *find_free_block(unsigned int size, unsigned int align)
 {
@@ -50,7 +47,6 @@ void *create_new_block(unsigned int size, unsigned int align)
     if (sbrk(sizeof(empty)) == SBRK_ERROR)
         return NULL;
     *((unsigned int *)sbrk(0) - 1) = empty;
-    // printf("Empty at %d is %d, ", ((unsigned int)sbrk(0) - 1), empty);
 
     block *blockInfo = (block *)returnBlock;
     blockInfo->alignedMalloc = (void *)sbrk(0);
@@ -82,7 +78,11 @@ int checkAlign(unsigned int x)
 void *aligned_malloc(unsigned int size, unsigned int align)
 {
     if (size == 0 || align == 0 || checkAlign(align) == 0)
+    {
+        if (checkAlign(align) == 0)
+            printf("Align is not a power of 2");
         return NULL;
+    }
 
     block *tmpBlock;
 
@@ -121,7 +121,6 @@ void *aligned_malloc(unsigned int size, unsigned int align)
         bot->next = tmpBlock;
     bot = tmpBlock;
 
-    printf("New malloc at %u\n", (unsigned int)tmpBlock->alignedMalloc);
     return tmpBlock->alignedMalloc;
 }
 
@@ -152,14 +151,11 @@ void *aligned_free(void *ptr)
 
         // Return the address of the <block info> in block needed to be free
         sbrk(0 - sizeof(block) - freeBlock->totalSize);
-        printf("Block free at %u\n", freeBlock->alignedMalloc);
-
         return sbrk(0);
     }
     else
     {
         freeBlock->free = 1;
-        printf("Block Free at : %u\n", freeBlock->alignedMalloc);
         return sbrk(0);
     }
 }
