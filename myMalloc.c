@@ -152,14 +152,14 @@ void *aligned_free(void *ptr)
 
         // Return the address of the <block info> in block needed to be free
         sbrk(0 - sizeof(block) - freeBlock->totalSize);
-        printf("Block free at %u\n", freeBlock);
+        printf("Block free at %u\n", freeBlock->alignedMalloc);
 
         return sbrk(0);
     }
     else
     {
         freeBlock->free = 1;
-        printf("Block Free at : %u\n", freeBlock);
+        printf("Block Free at : %u\n", freeBlock->alignedMalloc);
         return sbrk(0);
     }
 }
