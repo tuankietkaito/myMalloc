@@ -36,9 +36,6 @@ void *create_new_block(unsigned int size, unsigned int align)
     unsigned int addr, empty;
 
     returnBlock = sbrk(0);
-    block *blockInfo = (block *)returnBlock;
-    blockInfo->free = 0;
-    blockInfo->next = NULL;
 
     if (sbrk(sizeof(block)) == SBRK_ERROR)
         return NULL;
@@ -55,11 +52,14 @@ void *create_new_block(unsigned int size, unsigned int align)
     *((unsigned int *)sbrk(0) - 1) = empty;
     printf("Empty at %d is %d, ", ((unsigned int)sbrk(0) - 1), empty);
 
-    blockInfo->totalSize = size + empty + sizeof(empty);
+    block *blockInfo = (block *)returnBlock;
     blockInfo->alignedMalloc = (void *)sbrk(0);
-
     if (sbrk(size) == SBRK_ERROR)
         return NULL;
+
+    blockInfo->totalSize = size + empty + sizeof(empty);
+    blockInfo->free = 0;
+    blockInfo->next = NULL;
 
     return returnBlock;
 }
